@@ -43,6 +43,7 @@ export default defineComponent({
       this.game.lost = false;
       this.game.userNumber = 0;
       this.game.maxRounds = -1;
+      this.game.maxNumber = -1;
       this.game.currentNumber = -1;
       this.game.currentRound = -1;
       this.game.userNumber = 0;
