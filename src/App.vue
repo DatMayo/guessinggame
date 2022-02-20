@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import { GameDifficulty, MenuStage } from "@/enum";
 
 export default defineComponent({
   // type inference enabled
   data() {
     return {
-      currentMenu: 0,
+      MenuStage,
+      currentMenu: MenuStage.Start,
       game: {
         maxRounds: -1,
         currentRound: -1,
@@ -39,26 +41,26 @@ export default defineComponent({
     setRandomNumber(max: number) {
       return Math.floor(Math.random() * (max - 0 + 1) + 0);
     },
-    setGameDifficulty(difficulty: number) {
+    setGameDifficulty(difficulty: GameDifficulty) {
       this.currentMenu = 3;
       this.game.ended = false;
       this.game.lost = false;
       this.game.userNumber = 0;
       this.game.message = "Wähle deine erste Zahl";
       switch (difficulty) {
-        case 0:
+        case GameDifficulty.Easy:
           this.game.maxRounds = 8;
           this.game.currentRound = 1;
           this.game.maxNumber = 20;
           this.game.currentNumber = this.setRandomNumber(this.game.maxNumber);
           break;
-        case 1:
+        case GameDifficulty.Medium:
           this.game.maxRounds = 6;
           this.game.currentRound = 1;
           this.game.maxNumber = 50;
           this.game.currentNumber = this.setRandomNumber(this.game.maxNumber);
           break;
-        case 2:
+        case GameDifficulty.Hard:
           this.game.maxRounds = 4;
           this.game.currentRound = 1;
           this.game.maxNumber = 80;
@@ -76,21 +78,21 @@ export default defineComponent({
       <div></div>
       <div>
         <b>Guessing game</b><br /><br />
-        <div id="mainmenu" v-if="currentMenu === 0">
+        <div id="mainmenu" v-if="currentMenu === MenuStage.Start">
           <button @click="currentMenu = 1">Spiel starten</button><br />
           <button>Optionen</button><br />
           <button>Beenden</button>
         </div>
-        <div id="modeselect" v-if="currentMenu === 1">
+        <div id="modeselect" v-if="currentMenu === MenuStage.Mode">
           <button @click="currentMenu = 2">PvE</button><br />
           <button disabled>PvP</button><br />
         </div>
-        <div id="difficultyselect" v-if="currentMenu === 2">
+        <div id="difficultyselect" v-if="currentMenu === MenuStage.Difficulty">
           <button @click="setGameDifficulty(0)">Leicht</button><br />
           <button @click="setGameDifficulty(1)">Mittel</button><br />
           <button @click="setGameDifficulty(2)">Schwer</button><br />
         </div>
-        <div id="gametime" v-if="currentMenu === 3">
+        <div id="gametime" v-if="currentMenu === MenuStage.Game">
           Alles klar, du hast {{ game.maxRounds }} Züge Zeit um eine Zahl
           zwischen 0 und {{ game.maxNumber }} zu finden.<br />
           Computer: {{ game.message }}<br />
