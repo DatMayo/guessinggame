@@ -83,6 +83,11 @@ export default defineComponent({
       this.resetProgress();
     },
   },
+  watch: {
+    currentMenu(oldVal, newVal) {
+      if (newVal === MenuStage.Start) this.resetProgress();
+    },
+  },
 });
 </script>
 
