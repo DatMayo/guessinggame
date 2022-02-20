@@ -38,14 +38,21 @@ export default defineComponent({
         this.game.lost = true;
       }
     },
+    resetProgress() {
+      this.game.ended = false;
+      this.game.lost = false;
+      this.game.userNumber = 0;
+      this.game.maxRounds = -1;
+      this.game.currentNumber = -1;
+      this.game.currentRound = -1;
+      this.game.userNumber = -1;
+    },
     setRandomNumber(max: number) {
       return Math.floor(Math.random() * (max - 0 + 1) + 0);
     },
     setGameDifficulty(difficulty: GameDifficulty) {
-      this.currentMenu = 3;
-      this.game.ended = false;
-      this.game.lost = false;
-      this.game.userNumber = 0;
+      this.resetProgress();
+      this.currentMenu = MenuStage.Game;
       this.game.message = "Wähle deine erste Zahl";
       switch (difficulty) {
         case GameDifficulty.Easy:
@@ -68,29 +75,73 @@ export default defineComponent({
           break;
       }
     },
+    startPvPGame() {
+      this.currentMenu = MenuStage.Game;
+      this.game.message =
+        "Das ist zwar ein PvP spiel, aber ich helfe dir dennoch 🙃";
+      this.resetProgress();
+    },
   },
 });
 </script>
 
 <template>
   <div id="main">
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-3 p-4">
       <div></div>
       <div>
         <b>Guessing game</b><br /><br />
         <div id="mainmenu" v-if="currentMenu === MenuStage.Start">
-          <button @click="currentMenu = 1">Spiel starten</button><br />
+          <button @click="currentMenu = MenuStage.Mode">Spiel starten</button
+          ><br />
           <button>Optionen</button><br />
-          <button>Beenden</button>
+          <form action="https://www.google.de">
+            <button type="submit">Beenden</button>
+          </form>
         </div>
         <div id="modeselect" v-if="currentMenu === MenuStage.Mode">
-          <button @click="currentMenu = 2">PvE</button><br />
-          <button disabled>PvP</button><br />
+          <button @click="currentMenu = MenuStage.Difficulty">PvE</button><br />
+          <button @click="currentMenu = MenuStage.PvP">PvP</button><br />
         </div>
         <div id="difficultyselect" v-if="currentMenu === MenuStage.Difficulty">
           <button @click="setGameDifficulty(0)">Leicht</button><br />
           <button @click="setGameDifficulty(1)">Mittel</button><br />
           <button @click="setGameDifficulty(2)">Schwer</button><br />
+        </div>
+        <div id="pvp" v-if="currentMenu === MenuStage.PvP">
+          <b>Setup - Bitte gib die Rahmenbedingungen an</b><br /><br />
+          <div class="grid grid-cols-2">
+            <div>Maximale Rundenzahl:</div>
+            <div>
+              <input
+                type="number"
+                min="0"
+                class="border-b w-10"
+                v-model="game.maxRounds"
+              />
+            </div>
+            <div>Höchster Wert</div>
+            <div>
+              <input
+                type="number"
+                min="0"
+                class="border-b w-10"
+                v-model="game.maxNumber"
+              />
+            </div>
+            <div>Zu erratende Zahl</div>
+            <div>
+              <input
+                type="number"
+                min="0"
+                class="border-b w-10"
+                v-model="game.currentNumber"
+              />
+            </div>
+          </div>
+          <br /><button class="font-bold" @click="startPvPGame">
+            &gt; Start
+          </button>
         </div>
         <div id="gametime" v-if="currentMenu === MenuStage.Game">
           Alles klar, du hast {{ game.maxRounds }} Züge Zeit um eine Zahl
@@ -114,7 +165,12 @@ export default defineComponent({
           </div>
         </div>
         <br />
-        <button v-if="currentMenu > 0" @click="currentMenu -= 1">Zurück</button>
+        <button
+          v-if="currentMenu > MenuStage.Start"
+          @click="currentMenu = MenuStage.Start"
+        >
+          Zurück zum Start
+        </button>
       </div>
       <div></div>
     </div>
