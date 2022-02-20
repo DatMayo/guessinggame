@@ -45,7 +45,7 @@ export default defineComponent({
       this.game.maxRounds = -1;
       this.game.currentNumber = -1;
       this.game.currentRound = -1;
-      this.game.userNumber = -1;
+      this.game.userNumber = 0;
     },
     setRandomNumber(max: number) {
       return Math.floor(Math.random() * (max - 0 + 1) + 0);
